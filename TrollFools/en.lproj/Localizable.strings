@@ -227,6 +227,15 @@
 "Re-enabled %d plug-ins in %d apps." = "Re-enabled %d plug-ins in %d apps.";
 
 /* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps, %d apps failed." = "Re-enabled %d plug-ins in %d apps, %d apps failed.";
+
+/* No comment provided by engineer. */
+"Completed with Errors" = "Completed with Errors";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps." = "Failed to re-enable plug-ins in %d apps.";
+
+/* No comment provided by engineer. */
 "Record your phone calls like never before." = "Record your phone calls like never before.";
 
 /* No comment provided by engineer. */

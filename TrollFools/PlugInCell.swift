@@ -84,6 +84,9 @@ struct PlugInCell: View {
         .onAppear {
             isEnabled = plugIn.isEnabled
         }
+        .onChange(of: plugIn.isEnabled) { value in
+            isEnabled = value
+        }
         .onChange(of: isEnabled) { value in
             ejectList.togglePlugIn(plugIn, isEnabled: value)
         }

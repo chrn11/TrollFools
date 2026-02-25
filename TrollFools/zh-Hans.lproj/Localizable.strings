@@ -227,6 +227,15 @@
 "Re-enabled %d plug-ins in %d apps." = "已在 %2$d 个应用中重新启用 %1$d 个插件。";
 
 /* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps, %d apps failed." = "已在 %2$d 个应用中重新启用 %1$d 个插件，另有 %3$d 个应用失败。";
+
+/* No comment provided by engineer. */
+"Completed with Errors" = "完成但有错误";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps." = "有 %d 个应用恢复插件失败。";
+
+/* No comment provided by engineer. */
 "Record your phone calls like never before." = "通话录音，从未如此简单。";
 
 /* No comment provided by engineer. */

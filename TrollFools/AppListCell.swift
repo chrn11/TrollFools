@@ -11,7 +11,7 @@ import SwiftUI
 struct AppListCell: View {
     @EnvironmentObject var appList: AppListModel
 
-    @StateObject var app: App
+    @ObservedObject var app: App
 
     @available(iOS 15, *)
     var highlightedName: AttributedString {

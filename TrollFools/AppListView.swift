@@ -18,6 +18,7 @@ struct AppListView: View {
     private struct RestoreDisabledPlugInsSummary {
         let appCount: Int
         let plugInCount: Int
+        let failedAppCount: Int
     }
 
     @StateObject var searchViewModel = AppListSearchModel()
@@ -206,6 +207,9 @@ struct AppListView: View {
         if #available(iOS 15, *) {
             searchableListView
                 .refreshable {
+                    guard !isRestoringDisabledPlugIns else {
+                        return
+                    }
                     appList.reload()
                 }
         } else {
@@ -215,7 +219,9 @@ struct AppListView: View {
                         tableView.refreshControl = {
                             let refreshControl = UIRefreshControl()
                             refreshControl.addAction(UIAction { action in
-                                appList.reload()
+                                if !isRestoringDisabledPlugIns {
+                                    appList.reload()
+                                }
                                 if let control = action.sender as? UIRefreshControl {
                                     control.endRefreshing()
                                 }
@@ -280,6 +286,7 @@ struct AppListView: View {
             shouldShowAdvertisement
         ))
         .listStyle(.insetGrouped)
+        .disabled(isRestoringDisabledPlugIns)
         .navigationTitle(appList.isSelectorMode ?
             NSLocalizedString("Select Application to Inject", comment: "") :
             NSLocalizedString("TrollFools", comment: "")
@@ -545,58 +552,70 @@ struct AppListView: View {
         let apps = appList.allApplications
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let result = restoreDisabledPlugInsForAllApps(apps)
+            let summary = restoreDisabledPlugInsForAllApps(apps)
 
             DispatchQueue.main.async {
                 isRestoringDisabledPlugIns = false
                 appList.reload()
-
-                switch result {
-                case let .success(summary):
-                    restoreResultTitle = NSLocalizedString("Completed", comment: "")
-                    if summary.plugInCount == 0 {
-                        restoreResultMessage = NSLocalizedString("No disabled plug-ins found in patched apps.", comment: "")
-                    } else {
-                        restoreResultMessage = String(
-                            format: NSLocalizedString("Re-enabled %d plug-ins in %d apps.", comment: ""),
-                            summary.plugInCount,
-                            summary.appCount
-                        )
-                    }
-                    isRestoreResultPresented = true
-                case let .failure(error):
-                    restoreResultTitle = NSLocalizedString("Failed", comment: "")
-                    restoreResultMessage = error.localizedDescription
-                    isRestoreResultPresented = true
-                }
+                presentRestoreSummary(summary)
             }
         }
     }
 
-    private func restoreDisabledPlugInsForAllApps(_ apps: [App]) -> Result<RestoreDisabledPlugInsSummary, Error> {
+    private func presentRestoreSummary(_ summary: RestoreDisabledPlugInsSummary) {
+        if summary.failedAppCount == 0 {
+            restoreResultTitle = NSLocalizedString("Completed", comment: "")
+            if summary.plugInCount == 0 {
+                restoreResultMessage = NSLocalizedString("No disabled plug-ins found in patched apps.", comment: "")
+            } else {
+                restoreResultMessage = String(
+                    format: NSLocalizedString("Re-enabled %d plug-ins in %d apps.", comment: ""),
+                    summary.plugInCount,
+                    summary.appCount
+                )
+            }
+        } else if summary.plugInCount == 0 {
+            restoreResultTitle = NSLocalizedString("Failed", comment: "")
+            restoreResultMessage = String(
+                format: NSLocalizedString("Failed to re-enable plug-ins in %d apps.", comment: ""),
+                summary.failedAppCount
+            )
+        } else {
+            restoreResultTitle = NSLocalizedString("Completed with Errors", comment: "")
+            restoreResultMessage = String(
+                format: NSLocalizedString("Re-enabled %d plug-ins in %d apps, %d apps failed.", comment: ""),
+                summary.plugInCount,
+                summary.appCount,
+                summary.failedAppCount
+            )
+        }
+
+        isRestoreResultPresented = true
+    }
+
+    private func restoreDisabledPlugInsForAllApps(_ apps: [App]) -> RestoreDisabledPlugInsSummary {
         var recoveredAppCount = 0
         var recoveredPlugInCount = 0
-        var logFileURL: URL?
+        var failedAppCount = 0
         let defaults = UserDefaults.standard
 
-        do {
-            for app in apps where app.hasPersistedAssets {
-                let persistedPlugIns = InjectorV3.main.persistedAssetURLs(bid: app.bid)
-                guard !persistedPlugIns.isEmpty else {
-                    continue
-                }
+        for app in apps {
+            let persistedPlugIns = InjectorV3.main.persistedAssetURLs(bid: app.bid)
+            guard !persistedPlugIns.isEmpty else {
+                continue
+            }
 
-                let enabledPlugInNames = Set(InjectorV3.main.injectedAssetURLsInBundle(app.url).map(\.lastPathComponent))
-                let disabledPlugIns = persistedPlugIns.filter {
-                    !enabledPlugInNames.contains($0.lastPathComponent)
-                }
+            let enabledPlugInNames = Set(InjectorV3.main.injectedAssetURLsInBundle(app.url).map(\.lastPathComponent))
+            let disabledPlugIns = persistedPlugIns.filter {
+                !enabledPlugInNames.contains($0.lastPathComponent)
+            }
 
-                guard !disabledPlugIns.isEmpty else {
-                    continue
-                }
+            guard !disabledPlugIns.isEmpty else {
+                continue
+            }
 
+            do {
                 let injector = try InjectorV3(app.url)
-                logFileURL = injector.latestLogFileURL
 
                 if injector.appID.isEmpty {
                     injector.appID = app.bid
@@ -615,23 +634,13 @@ struct AppListView: View {
                 try injector.inject(disabledPlugIns, shouldPersist: false)
                 recoveredPlugInCount += disabledPlugIns.count
                 recoveredAppCount += 1
+            } catch {
+                DDLogError("\(error)", ddlog: InjectorV3.main.logger)
+                failedAppCount += 1
             }
-
-            return .success(.init(appCount: recoveredAppCount, plugInCount: recoveredPlugInCount))
-        } catch {
-            DDLogError("\(error)", ddlog: InjectorV3.main.logger)
-
-            var userInfo: [String: Any] = [
-                NSLocalizedDescriptionKey: error.localizedDescription,
-            ]
-
-            if let logFileURL {
-                userInfo[NSURLErrorKey] = logFileURL
-            }
-
-            let nsErr = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
-            return .failure(nsErr)
         }
+
+        return .init(appCount: recoveredAppCount, plugInCount: recoveredPlugInCount, failedAppCount: failedAppCount)
     }
 
     @ViewBuilder

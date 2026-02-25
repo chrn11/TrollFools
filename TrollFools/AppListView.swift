@@ -15,6 +15,11 @@ typealias Scope = AppListModel.Scope
 struct AppListView: View {
     let isPad: Bool = UIDevice.current.userInterfaceIdiom == .pad
 
+    private struct RestoreDisabledPlugInsSummary {
+        let appCount: Int
+        let plugInCount: Int
+    }
+
     @StateObject var searchViewModel = AppListSearchModel()
     @EnvironmentObject var appList: AppListModel
     @Environment(\.verticalSizeClass) var verticalSizeClass
@@ -26,12 +31,20 @@ struct AppListView: View {
     @State var temporaryOpenedURL: URLIdentifiable? = nil
 
     @State var latestVersionString: String?
+    @State var isRestoringDisabledPlugIns = false
+    @State var isRestoreResultPresented = false
+    @State var restoreResultTitle = ""
+    @State var restoreResultMessage = ""
 
     @AppStorage("isAdvertisementHiddenV2")
     var isAdvertisementHidden: Bool = false
 
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
+
+    var shouldDisableToolbarActions: Bool {
+        isRestoringDisabledPlugIns
+    }
 
     var shouldShowAdvertisement: Bool {
         !isAdvertisementHidden &&
@@ -91,8 +104,20 @@ struct AppListView: View {
                 } message: {
                     Text(OptionView.warningMessage([$0.url]))
                 }
+                .alert(restoreResultTitle, isPresented: $isRestoreResultPresented) {
+                    Button(NSLocalizedString("Done", comment: ""), role: .cancel) { }
+                } message: {
+                    Text(restoreResultMessage)
+                }
         } else {
             content
+                .alert(isPresented: $isRestoreResultPresented) {
+                    Alert(
+                        title: Text(restoreResultTitle),
+                        message: Text(restoreResultMessage),
+                        dismissButton: .default(Text(NSLocalizedString("Done", comment: "")))
+                    )
+                }
         }
     }
 
@@ -269,7 +294,21 @@ struct AppListView: View {
                     }
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if !appList.isSelectorMode {
+                    Button {
+                        reEnableAllDisabledPlugIns()
+                    } label: {
+                        if isRestoringDisabledPlugIns {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "arrow.clockwise.circle")
+                        }
+                    }
+                    .disabled(shouldDisableToolbarActions)
+                    .accessibilityLabel(NSLocalizedString("Re-Enable Disabled Plug-Ins", comment: ""))
+                }
+
                 Button {
                     appList.filter.showPatchedOnly.toggle()
                 } label: {
@@ -283,6 +322,7 @@ struct AppListView: View {
                             : "eject.circle")
                     }
                 }
+                .disabled(shouldDisableToolbarActions)
                 .accessibilityLabel(NSLocalizedString("Show Patched Only", comment: ""))
             }
         }
@@ -493,6 +533,105 @@ struct AppListView: View {
         searchBar.placeholder = (showPatchedOnly
             ? NSLocalizedString("Search Patched…", comment: "")
             : NSLocalizedString("Search…", comment: ""))
+    }
+
+    private func reEnableAllDisabledPlugIns() {
+        guard !isRestoringDisabledPlugIns else {
+            return
+        }
+
+        isRestoringDisabledPlugIns = true
+
+        let apps = appList.allApplications
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let result = restoreDisabledPlugInsForAllApps(apps)
+
+            DispatchQueue.main.async {
+                isRestoringDisabledPlugIns = false
+                appList.reload()
+
+                switch result {
+                case let .success(summary):
+                    restoreResultTitle = NSLocalizedString("Completed", comment: "")
+                    if summary.plugInCount == 0 {
+                        restoreResultMessage = NSLocalizedString("No disabled plug-ins found in patched apps.", comment: "")
+                    } else {
+                        restoreResultMessage = String(
+                            format: NSLocalizedString("Re-enabled %d plug-ins in %d apps.", comment: ""),
+                            summary.plugInCount,
+                            summary.appCount
+                        )
+                    }
+                    isRestoreResultPresented = true
+                case let .failure(error):
+                    restoreResultTitle = NSLocalizedString("Failed", comment: "")
+                    restoreResultMessage = error.localizedDescription
+                    isRestoreResultPresented = true
+                }
+            }
+        }
+    }
+
+    private func restoreDisabledPlugInsForAllApps(_ apps: [App]) -> Result<RestoreDisabledPlugInsSummary, Error> {
+        var recoveredAppCount = 0
+        var recoveredPlugInCount = 0
+        var logFileURL: URL?
+        let defaults = UserDefaults.standard
+
+        do {
+            for app in apps where app.hasPersistedAssets {
+                let persistedPlugIns = InjectorV3.main.persistedAssetURLs(bid: app.bid)
+                guard !persistedPlugIns.isEmpty else {
+                    continue
+                }
+
+                let enabledPlugInNames = Set(InjectorV3.main.injectedAssetURLsInBundle(app.url).map(\.lastPathComponent))
+                let disabledPlugIns = persistedPlugIns.filter {
+                    !enabledPlugInNames.contains($0.lastPathComponent)
+                }
+
+                guard !disabledPlugIns.isEmpty else {
+                    continue
+                }
+
+                let injector = try InjectorV3(app.url)
+                logFileURL = injector.latestLogFileURL
+
+                if injector.appID.isEmpty {
+                    injector.appID = app.bid
+                }
+
+                if injector.teamID.isEmpty {
+                    injector.teamID = app.teamID
+                }
+
+                injector.useWeakReference = (defaults.object(forKey: "UseWeakReference-\(app.bid)") as? Bool) ?? true
+                injector.preferMainExecutable = (defaults.object(forKey: "PreferMainExecutable-\(app.bid)") as? Bool) ?? false
+                injector.injectStrategy = defaults
+                    .string(forKey: "InjectStrategy-\(app.bid)")
+                    .flatMap(InjectorV3.Strategy.init(rawValue:)) ?? .lexicographic
+
+                try injector.inject(disabledPlugIns, shouldPersist: false)
+                recoveredPlugInCount += disabledPlugIns.count
+                recoveredAppCount += 1
+            }
+
+            return .success(.init(appCount: recoveredAppCount, plugInCount: recoveredPlugInCount))
+        } catch {
+            DDLogError("\(error)", ddlog: InjectorV3.main.logger)
+
+            var userInfo: [String: Any] = [
+                NSLocalizedDescriptionKey: error.localizedDescription,
+            ]
+
+            if let logFileURL {
+                userInfo[NSURLErrorKey] = logFileURL
+            }
+
+            let nsErr = NSError(domain: Constants.gErrorDomain, code: 0, userInfo: userInfo)
+            return .failure(nsErr)
+        }
     }
 
     @ViewBuilder

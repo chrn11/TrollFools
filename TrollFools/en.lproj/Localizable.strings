@@ -188,6 +188,9 @@
 "No Injected Plug-Ins" = "No Injected Plug-Ins";
 
 /* No comment provided by engineer. */
+"No disabled plug-ins found in patched apps." = "No disabled plug-ins found in patched apps.";
+
+/* No comment provided by engineer. */
 "No valid plug-ins found." = "No valid plug-ins found.";
 
 /* No comment provided by engineer. */
@@ -216,6 +219,12 @@
 
 /* No comment provided by engineer. */
 "Rebuild Icon Cache" = "Rebuild Icon Cache";
+
+/* No comment provided by engineer. */
+"Re-Enable Disabled Plug-Ins" = "Re-Enable Disabled Plug-Ins";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps." = "Re-enabled %d plug-ins in %d apps.";
 
 /* No comment provided by engineer. */
 "Record your phone calls like never before." = "Record your phone calls like never before.";

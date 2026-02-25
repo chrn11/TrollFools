@@ -188,6 +188,9 @@
 "No Injected Plug-Ins" = "没有已注入的插件";
 
 /* No comment provided by engineer. */
+"No disabled plug-ins found in patched apps." = "在已注入应用中未找到已禁用插件。";
+
+/* No comment provided by engineer. */
 "No valid plug-ins found." = "没有找到有效的插件。";
 
 /* No comment provided by engineer. */
@@ -216,6 +219,12 @@
 
 /* No comment provided by engineer. */
 "Rebuild Icon Cache" = "重建图标缓存";
+
+/* No comment provided by engineer. */
+"Re-Enable Disabled Plug-Ins" = "恢复已禁用插件";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps." = "已在 %2$d 个应用中重新启用 %1$d 个插件。";
 
 /* No comment provided by engineer. */
 "Record your phone calls like never before." = "通话录音，从未如此简单。";

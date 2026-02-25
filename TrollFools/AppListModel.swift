@@ -56,6 +56,10 @@ final class AppListModel: ObservableObject {
 
     @Published var unsupportedCount: Int = 0
 
+    var allApplications: [App] {
+        _allApplications
+    }
+
     lazy var isFilzaInstalled: Bool = {
         if let filzaURL {
             UIApplication.shared.canOpenURL(filzaURL)

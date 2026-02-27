@@ -42,7 +42,6 @@ struct AppListView: View {
 
     @AppStorage("pinInjectedApps")
     var pinInjectedApps: Bool = false
-    var isWarningHidden: Bool = false
 
     var shouldDisableToolbarActions: Bool {
         isRestoringDisabledPlugIns
@@ -150,15 +149,7 @@ struct AppListView: View {
                         }
                     }
                 }
-            }
-                CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
-                    DispatchQueue.main.async {
-                        withAnimation {
-                            latestVersionString = latestVersion?.tagName
-                        }
-                    }
-                }
-            }
+        }
     }
 
     @ViewBuilder

@@ -323,6 +323,7 @@ struct AppListView: View {
                 }
                 .disabled(shouldDisableToolbarActions)
                 .accessibilityLabel(NSLocalizedString("Pin Injected Apps", comment: ""))
+
                 Button {
                     appList.filter.showPatchedOnly.toggle()
                 } label: {

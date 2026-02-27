@@ -14,6 +14,7 @@ typealias Scope = AppListModel.Scope
 
 struct AppListView: View {
     let isPad: Bool = UIDevice.current.userInterfaceIdiom == .pad
+    private let pinInjectedAppsStorageKey = "pinInjectedAppsV2"
 
     private struct RestoreDisabledPlugInsSummary {
         let appCount: Int
@@ -39,9 +40,6 @@ struct AppListView: View {
 
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
-
-    @AppStorage("pinInjectedApps")
-    var pinInjectedApps: Bool = false
 
     var shouldDisableToolbarActions: Bool {
         isRestoringDisabledPlugIns
@@ -141,7 +139,6 @@ struct AppListView: View {
                 selectorOpenedURL = urlIdent
             }
             .onAppear {
-                appList.filter.pinInjectedApps = pinInjectedApps
                 CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
                     DispatchQueue.main.async {
                         withAnimation {
@@ -283,7 +280,7 @@ struct AppListView: View {
                     }
                 }
             }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 if !appList.isSelectorMode {
                     Button {
                         reEnableAllDisabledPlugIns()
@@ -297,17 +294,19 @@ struct AppListView: View {
                     .disabled(shouldDisableToolbarActions)
                     .accessibilityLabel(NSLocalizedString("Re-Enable Disabled Plug-Ins", comment: ""))
                 }
+            }
 
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
-                    pinInjectedApps.toggle()
-                    appList.filter.pinInjectedApps = pinInjectedApps
+                    appList.filter.pinInjectedApps.toggle()
+                    UserDefaults.standard.set(appList.filter.pinInjectedApps, forKey: pinInjectedAppsStorageKey)
                 } label: {
                     if #available(iOS 15, *) {
-                        Image(systemName: pinInjectedApps
+                        Image(systemName: appList.filter.pinInjectedApps
                             ? "pin.fill"
                             : "pin")
                     } else {
-                        Image(systemName: pinInjectedApps
+                        Image(systemName: appList.filter.pinInjectedApps
                             ? "star.fill"
                             : "star")
                     }

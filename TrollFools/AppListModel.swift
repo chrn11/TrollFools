@@ -294,4 +294,3 @@ extension AppListModel {
         return groupedApps
     }
 }
-}

@@ -37,8 +37,6 @@ struct AppListView: View {
     @State var restoreResultTitle = ""
     @State var restoreResultMessage = ""
 
-    @AppStorage("isAdvertisementHiddenV2")
-    var isAdvertisementHidden: Bool = false
 
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
@@ -47,13 +45,7 @@ struct AppListView: View {
         isRestoringDisabledPlugIns
     }
 
-    var shouldShowAdvertisement: Bool {
-        !isAdvertisementHidden &&
-            !appList.filter.isSearching &&
-            !appList.filter.showPatchedOnly &&
-            !appList.isRebuildNeeded &&
-            !appList.isSelectorMode
-    }
+
 
     var appString: String {
         let appNameString = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "TrollFools"
@@ -149,10 +141,6 @@ struct AppListView: View {
                 selectorOpenedURL = urlIdent
             }
             .onAppear {
-                if Double.random(in: 0 ..< 1) < 0.1 {
-                    isAdvertisementHidden = false
-                }
-
                 CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
                     DispatchQueue.main.async {
                         withAnimation {
@@ -270,15 +258,16 @@ struct AppListView: View {
         List {
             topSection
 
-            if #available(iOS 15, *) {
-                if appList.activeScope == .all && shouldShowAdvertisement {
-                    advertisementSection
-                }
-            }
+
 
             appSections
         }
         .animation(.easeOut, value: combines(
+            appList.isRebuildNeeded,
+            appList.activeScope,
+            appList.filter,
+            appList.unsupportedCount
+        ))
             appList.isRebuildNeeded,
             appList.activeScope,
             appList.filter,

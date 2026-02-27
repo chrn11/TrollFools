@@ -74,6 +74,22 @@ struct AppListCell: View {
                 if #available(iOS 15, *) {
                     Text(highlightedId)
                         .font(.subheadline)
+                        .lineLimit(1)
+                } else {
+                    Text(app.bid)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                }
+                    Text(highlightedId)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                } else {
+                    Text(app.bid)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                }
+                    Text(highlightedId)
+                        .font(.subheadline)
                         .lineLimit(app.isAdvertisement ? 2 : 1)
                 } else {
                     Text(app.bid)
@@ -103,12 +119,7 @@ struct AppListCell: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-            } else if app.isAdvertisement {
-                Image("badge-ad")
-                    .foregroundColor(.secondary)
-                    .scaleEffect(1.2)
-                    .accessibilityLabel(NSLocalizedString("This is an advertisement.", comment: ""))
-            }
+
         }
         .contextMenu {
             if !appList.isSelectorMode && !app.isAdvertisement {

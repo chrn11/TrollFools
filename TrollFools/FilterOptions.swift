@@ -19,13 +19,4 @@ struct FilterOptions: Hashable {
         showPatchedOnly = false
         pinInjectedApps = false
     }
-    var searchKeyword = ""
-    var showPatchedOnly = false
-
-    var isSearching: Bool { !searchKeyword.isEmpty }
-
-    mutating func reset() {
-        searchKeyword = ""
-        showPatchedOnly = false
-    }
 }

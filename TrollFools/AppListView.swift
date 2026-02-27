@@ -295,6 +295,22 @@ struct AppListView: View {
                 }
 
                 Button {
+                    appList.filter.pinInjectedApps.toggle()
+                } label: {
+                    if #available(iOS 15, *) {
+                        Image(systemName: appList.filter.pinInjectedApps
+                            ? "pin.fill"
+                            : "pin")
+                    } else {
+                        Image(systemName: appList.filter.pinInjectedApps
+                            ? "star.fill"
+                            : "star")
+                    }
+                }
+                .disabled(shouldDisableToolbarActions)
+                .accessibilityLabel(NSLocalizedString("Pin Injected Apps", comment: ""))
+
+                Button {
                     appList.filter.showPatchedOnly.toggle()
                 } label: {
                     if #available(iOS 15, *) {

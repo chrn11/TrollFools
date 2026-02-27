@@ -80,22 +80,6 @@ struct AppListCell: View {
                         .font(.subheadline)
                         .lineLimit(1)
                 }
-                    Text(highlightedId)
-                        .font(.subheadline)
-                        .lineLimit(1)
-                } else {
-                    Text(app.bid)
-                        .font(.subheadline)
-                        .lineLimit(1)
-                }
-                    Text(highlightedId)
-                        .font(.subheadline)
-                        .lineLimit(app.isAdvertisement ? 2 : 1)
-                } else {
-                    Text(app.bid)
-                        .font(.subheadline)
-                        .lineLimit(app.isAdvertisement ? 2 : 1)
-                }
             }
 
             Spacer()
@@ -119,10 +103,10 @@ struct AppListCell: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-
+            }
         }
         .contextMenu {
-            if !appList.isSelectorMode && !app.isAdvertisement {
+            if !appList.isSelectorMode {
                 cellContextMenuWrapper
             }
         }

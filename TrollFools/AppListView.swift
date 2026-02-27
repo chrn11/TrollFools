@@ -37,15 +37,12 @@ struct AppListView: View {
     @State var restoreResultTitle = ""
     @State var restoreResultMessage = ""
 
-
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
 
     var shouldDisableToolbarActions: Bool {
         isRestoringDisabledPlugIns
     }
-
-
 
     var appString: String {
         let appNameString = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "TrollFools"
@@ -258,8 +255,6 @@ struct AppListView: View {
         List {
             topSection
 
-
-
             appSections
         }
         .animation(.easeOut, value: combines(
@@ -267,12 +262,6 @@ struct AppListView: View {
             appList.activeScope,
             appList.filter,
             appList.unsupportedCount
-        ))
-            appList.isRebuildNeeded,
-            appList.activeScope,
-            appList.filter,
-            appList.unsupportedCount,
-            shouldShowAdvertisement
         ))
         .listStyle(.insetGrouped)
         .disabled(isRestoringDisabledPlugIns)
@@ -427,37 +416,6 @@ struct AppListView: View {
             }
         }
         .id("AppSection-\(sectionKey)")
-    }
-
-    @available(iOS 15.0, *)
-    var advertisementSection: some View {
-        Section {
-            Button {
-                UIApplication.shared.open(App.advertisementApp.url)
-            } label: {
-                if #available(iOS 16, *) {
-                    AppListCell(app: App.advertisementApp)
-                } else {
-                    AppListCell(app: App.advertisementApp)
-                        .padding(.vertical, 4)
-                }
-            }
-            .foregroundColor(.primary)
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                Button {
-                    isAdvertisementHidden = true
-                } label: {
-                    Label(NSLocalizedString("Hide", comment: ""), systemImage: "eye.slash")
-                }
-                .tint(.red)
-            }
-        } header: {
-            paddedHeaderFooterText(NSLocalizedString("Advertisement", comment: ""))
-                .textCase(.none)
-        } footer: {
-            paddedHeaderFooterText(NSLocalizedString("Buy our paid products to support us if you like TrollFools!", comment: ""))
-        }
-        .id("AdsSection")
     }
 
     @ViewBuilder

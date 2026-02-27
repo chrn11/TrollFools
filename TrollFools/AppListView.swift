@@ -40,6 +40,10 @@ struct AppListView: View {
     @AppStorage("isWarningHidden")
     var isWarningHidden: Bool = false
 
+    @AppStorage("pinInjectedApps")
+    var pinInjectedApps: Bool = false
+    var isWarningHidden: Bool = false
+
     var shouldDisableToolbarActions: Bool {
         isRestoringDisabledPlugIns
     }
@@ -138,6 +142,15 @@ struct AppListView: View {
                 selectorOpenedURL = urlIdent
             }
             .onAppear {
+                appList.filter.pinInjectedApps = pinInjectedApps
+                CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
+                    DispatchQueue.main.async {
+                        withAnimation {
+                            latestVersionString = latestVersion?.tagName
+                        }
+                    }
+                }
+            }
                 CheckUpdateManager.shared.checkUpdateIfNeeded { latestVersion, _ in
                     DispatchQueue.main.async {
                         withAnimation {
@@ -295,21 +308,21 @@ struct AppListView: View {
                 }
 
                 Button {
-                    appList.filter.pinInjectedApps.toggle()
+                    pinInjectedApps.toggle()
+                    appList.filter.pinInjectedApps = pinInjectedApps
                 } label: {
                     if #available(iOS 15, *) {
-                        Image(systemName: appList.filter.pinInjectedApps
+                        Image(systemName: pinInjectedApps
                             ? "pin.fill"
                             : "pin")
                     } else {
-                        Image(systemName: appList.filter.pinInjectedApps
+                        Image(systemName: pinInjectedApps
                             ? "star.fill"
                             : "star")
                     }
                 }
                 .disabled(shouldDisableToolbarActions)
                 .accessibilityLabel(NSLocalizedString("Pin Injected Apps", comment: ""))
-
                 Button {
                     appList.filter.showPatchedOnly.toggle()
                 } label: {

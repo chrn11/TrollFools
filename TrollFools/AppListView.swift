@@ -17,9 +17,9 @@ struct AppListView: View {
     private let pinInjectedAppsStorageKey = "pinInjectedAppsV2"
 
     private struct RestoreDisabledPlugInsSummary {
-        let appCount: Int
+        let recoveredAppNames: [String]
         let plugInCount: Int
-        let failedAppCount: Int
+        let failedAppNames: [String]
     }
 
     @StateObject var searchViewModel = AppListSearchModel()
@@ -530,30 +530,49 @@ struct AppListView: View {
     }
 
     private func presentRestoreSummary(_ summary: RestoreDisabledPlugInsSummary) {
-        if summary.failedAppCount == 0 {
+        let recoveredCount = summary.recoveredAppNames.count
+        let failedCount = summary.failedAppNames.count
+        
+        if failedCount == 0 {
             restoreResultTitle = NSLocalizedString("Completed", comment: "")
             if summary.plugInCount == 0 {
                 restoreResultMessage = NSLocalizedString("No disabled plug-ins found in patched apps.", comment: "")
             } else {
+                let appList = summary.recoveredAppNames.prefix(5).joined(separator: ", ")
+                let more = recoveredCount > 5 ? " ..." : ""
                 restoreResultMessage = String(
-                    format: NSLocalizedString("Re-enabled %d plug-ins in %d apps.", comment: ""),
+                    format: NSLocalizedString("Re-enabled %d plug-ins in %d apps:\n%@%@", comment: ""),
                     summary.plugInCount,
-                    summary.appCount
+                    recoveredCount,
+                    appList,
+                    more
                 )
             }
         } else if summary.plugInCount == 0 {
             restoreResultTitle = NSLocalizedString("Failed", comment: "")
+            let failedList = summary.failedAppNames.prefix(5).joined(separator: ", ")
+            let more = failedCount > 5 ? " ..." : ""
             restoreResultMessage = String(
-                format: NSLocalizedString("Failed to re-enable plug-ins in %d apps.", comment: ""),
-                summary.failedAppCount
+                format: NSLocalizedString("Failed to re-enable plug-ins in %d apps:\n%@%@", comment: ""),
+                failedCount,
+                failedList,
+                more
             )
         } else {
             restoreResultTitle = NSLocalizedString("Completed with Errors", comment: "")
+            let recoveredList = summary.recoveredAppNames.prefix(5).joined(separator: ", ")
+            let moreRecovered = recoveredCount > 5 ? " ..." : ""
+            let failedList = summary.failedAppNames.prefix(3).joined(separator: ", ")
+            let moreFailed = failedCount > 3 ? " ..." : ""
             restoreResultMessage = String(
-                format: NSLocalizedString("Re-enabled %d plug-ins in %d apps, %d apps failed.", comment: ""),
+                format: NSLocalizedString("Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@", comment: ""),
                 summary.plugInCount,
-                summary.appCount,
-                summary.failedAppCount
+                recoveredCount,
+                recoveredList,
+                moreRecovered,
+                failedCount,
+                failedList,
+                moreFailed
             )
         }
 
@@ -561,9 +580,9 @@ struct AppListView: View {
     }
 
     private func restoreDisabledPlugInsForAllApps(_ apps: [App]) -> RestoreDisabledPlugInsSummary {
-        var recoveredAppCount = 0
+        var recoveredAppNames: [String] = []
         var recoveredPlugInCount = 0
-        var failedAppCount = 0
+        var failedAppNames: [String] = []
         let defaults = UserDefaults.standard
 
         for app in apps {
@@ -600,14 +619,14 @@ struct AppListView: View {
 
                 try injector.inject(disabledPlugIns, shouldPersist: false)
                 recoveredPlugInCount += disabledPlugIns.count
-                recoveredAppCount += 1
+                recoveredAppNames.append(app.name)
             } catch {
                 DDLogError("\(error)", ddlog: InjectorV3.main.logger)
-                failedAppCount += 1
+                failedAppNames.append(app.name)
             }
         }
 
-        return .init(appCount: recoveredAppCount, plugInCount: recoveredPlugInCount, failedAppCount: failedAppCount)
+        return .init(recoveredAppNames: recoveredAppNames, plugInCount: recoveredPlugInCount, failedAppNames: failedAppNames)
     }
 
     @ViewBuilder

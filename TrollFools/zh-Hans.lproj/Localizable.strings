@@ -243,6 +243,15 @@
 "Failed to re-enable plug-ins in %d apps." = "有 %d 个应用恢复插件失败。";
 
 /* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@" = "已在 %2$d 个应用中重新启用 %1$d 个插件：\n%3$@%4$@";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps:\n%@%@" = "有 %1$d 个应用恢复插件失败：\n%2$@%3$@";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@" = "已在 %2$d 个应用中重新启用 %1$d 个插件：\n%3$@%4$@\n\n失败的有 %5$d 个应用：\n%6$@%7$@";
+
+/* No comment provided by engineer. */
 "Record your phone calls like never before." = "通话录音，从未如此简单。";
 
 /* No comment provided by engineer. */

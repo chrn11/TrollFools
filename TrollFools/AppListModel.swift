@@ -47,6 +47,8 @@ final class AppListModel: ObservableObject {
     static let hasTrollStore: Bool = { LSApplicationProxy(forIdentifier: "com.opa334.TrollStore") != nil }()
     private var _allApplications: [App] = []
 
+    var allApplications: [App] { _allApplications }
+
     let selectorURL: URL?
     var isSelectorMode: Bool { selectorURL != nil }
 

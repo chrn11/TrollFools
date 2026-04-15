@@ -309,3 +309,24 @@
 
 /* No comment provided by engineer. */
 "You’ve selected at least one Debian Package “%@”. We’re here to remind you that it will not work as it was in a jailbroken environment. Please make sure you know what you’re doing." = "你至少选择了一个 Debian 软件包 “%@”。请留意，它通常不会像在越狱环境当中那样工作，甚至完全不起作用。请确保你知道自己在做些什么。";
+
+/* No comment provided by engineer. */
+"Pin Injected Apps" = "置顶已注入应用";
+
+/* No comment provided by engineer. */
+"Re-Enable Disabled Plug-Ins" = "恢复已禁用插件";
+
+/* No comment provided by engineer. */
+"No disabled plug-ins found in patched apps." = "在已注入应用中未找到已禁用插件。";
+
+/* No comment provided by engineer. */
+"Completed with Errors" = "完成但有错误";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@" = "已在 %2$d 个应用中重新启用 %1$d 个插件：\n%3$@%4$@";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps:\n%@%@" = "有 %1$d 个应用恢复插件失败：\n%2$@%3$@";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@" = "已在 %2$d 个应用中重新启用 %1$d 个插件：\n%3$@%4$@\n\n失败的有 %5$d 个应用：\n%6$@%7$@";

@@ -131,15 +131,26 @@ final class AppListModel: ObservableObject {
             filteredApplications = filteredApplications.filter { $0.isInjected || $0.hasPersistedAssets }
         }
 
+        if filter.pinInjectedApps {
+            filteredApplications.sort { app1, app2 in
+                let app1Injected = app1.isInjected || app1.hasPersistedAssets
+                let app2Injected = app2.isInjected || app2.hasPersistedAssets
+                if app1Injected != app2Injected {
+                    return app1Injected
+                }
+                return app1.name.localizedCaseInsensitiveCompare(app2.name) == .orderedAscending
+            }
+        }
+
         switch activeScope {
         case .all:
-            activeScopeApps = Self.groupedAppList(filteredApplications)
+            activeScopeApps = Self.groupedAppList(filteredApplications, pinInjectedApps: filter.pinInjectedApps)
         case .user:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isUser })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isUser }, pinInjectedApps: filter.pinInjectedApps)
         case .troll:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromTroll })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromTroll }, pinInjectedApps: filter.pinInjectedApps)
         case .system:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromApple })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromApple }, pinInjectedApps: filter.pinInjectedApps)
         }
     }
 
@@ -229,7 +240,7 @@ extension AppListModel {
     static let allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#"
     private static let allowedCharacterSet = CharacterSet(charactersIn: allowedCharacters)
 
-    private static func groupedAppList(_ apps: [App]) -> OrderedDictionary<String, [App]> {
+    private static func groupedAppList(_ apps: [App], pinInjectedApps: Bool = false) -> OrderedDictionary<String, [App]> {
         var groupedApps = OrderedDictionary<String, [App]>()
 
         for app in apps {
@@ -265,6 +276,19 @@ extension AppListModel {
                 return idx1 < idx2
             }
             return app1.key < app2.key
+        }
+
+        if pinInjectedApps {
+            for key in groupedApps.keys {
+                groupedApps[key]?.sort { app1, app2 in
+                    let app1Injected = app1.isInjected || app1.hasPersistedAssets
+                    let app2Injected = app2.isInjected || app2.hasPersistedAssets
+                    if app1Injected != app2Injected {
+                        return app1Injected
+                    }
+                    return app1.name.localizedCaseInsensitiveCompare(app2.name) == .orderedAscending
+                }
+            }
         }
 
         return groupedApps

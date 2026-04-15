@@ -45,6 +45,9 @@ struct DisclaimerView: View {
 
                 ToolbarItem(placement: .bottomBar) {
                     Button {
+                        let defaults = UserDefaults.standard
+                        defaults.set(true, forKey: "isDisclaimerHiddenV2")
+                        defaults.set(true, forKey: "isDisclaimerHidden")
                         isDisclaimerHidden = true
                     } label: {
                         VStack(spacing: 0) {

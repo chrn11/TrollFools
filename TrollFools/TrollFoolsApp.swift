@@ -15,6 +15,14 @@ struct TrollFoolsApp: SwiftUI.App {
 
     init() {
         try? FileManager.default.removeItem(at: InjectorV3.temporaryRoot)
+
+        // 迁移旧免责声明 key 到新 key
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "isDisclaimerHidden"),
+           !defaults.bool(forKey: "isDisclaimerHiddenV2")
+        {
+            defaults.set(true, forKey: "isDisclaimerHiddenV2")
+        }
     }
 
     var body: some Scene {

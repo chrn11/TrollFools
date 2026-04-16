@@ -67,7 +67,7 @@ struct AppListView: View {
         )
     }
 
-    var body: some View {
+var body: some View {
         if #available(iOS 15, *) {
             content
                 .alert(
@@ -80,6 +80,37 @@ struct AppListView: View {
                     } label: {
                         Text(NSLocalizedString("Continue", comment: ""))
                     }
+                    Button(role: .destructive) {
+                        selectorOpenedURL = result
+                        isWarningHidden = true
+                    } label: {
+                        Text(NSLocalizedString("Continue and Don't Show Again", comment: ""))
+                    }
+                    Button(role: .cancel) {
+                        temporaryOpenedURL = nil
+                        isWarningPresented = false
+                    } label: {
+                        Text(NSLocalizedString("Cancel", comment: ""))
+                    }
+                } message: {
+                    Text(OptionView.warningMessage([$0.url]))
+                }
+                .alert(restoreResultTitle, isPresented: $isRestoreResultPresented) {
+                    Button(NSLocalizedString("Done", comment: ""), role: .cancel) { }
+                } message: {
+                    Text(restoreResultMessage)
+                }
+        } else {
+            content
+                .alert(isPresented: $isRestoreResultPresented) {
+                    Alert(
+                        title: Text(restoreResultTitle),
+                        message: Text(restoreResultMessage),
+                        dismissButton: .default(Text(NSLocalizedString("Done", comment: "")))
+                    )
+                }
+        }
+    }
                     Button(role: .destructive) {
                         selectorOpenedURL = result
                         isWarningHidden = true
@@ -134,11 +165,6 @@ struct AppListView: View {
                         }
                     }
                 }
-            }
-            .alert(restoreResultTitle, isPresented: $isRestoreResultPresented) {
-                Button(NSLocalizedString("Done", comment: ""), role: .cancel) { }
-            } message: {
-                Text(restoreResultMessage)
             }
     }
 

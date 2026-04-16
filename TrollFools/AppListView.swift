@@ -67,7 +67,7 @@ struct AppListView: View {
         )
     }
 
-var body: some View {
+    var body: some View {
         if #available(iOS 15, *) {
             content
                 .alert(
@@ -110,7 +110,6 @@ var body: some View {
                     )
                 }
         }
-}
     }
 
     var content: some View {

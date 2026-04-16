@@ -308,4 +308,34 @@
 "You need to rebuild the icon cache in TrollStore to apply changes." = "你需要在 TrollStore 中重建图标缓存以应用更改。";
 
 /* No comment provided by engineer. */
+"Pin Injected Apps" = "置顶已注入应用";
+
+/* No comment provided by engineer. */
+"Pinned" = "已置顶";
+
+/* No comment provided by engineer. */
+"Re-Enable Disabled Plug-Ins" = "恢复已禁用插件";
+
+/* No comment provided by engineer. */
+"Completed" = "已完成";
+
+/* No comment provided by engineer. */
+"Failed" = "失败";
+
+/* No comment provided by engineer. */
+"Completed with Errors" = "已完成但有错误";
+
+/* No comment provided by engineer. */
+"No disabled plug-ins found in patched apps." = "未在已注入应用中找到已禁用插件。";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@" = "已在 %d 个应用中重新启用 %d 个插件：\n%@%@";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps:\n%@%@" = "在 %d 个应用中重新启用插件失败：\n%@%@";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@" = "已在 %d 个应用中重新启用 %d 个插件：\n%@%@\n\n以下 %d 个应用失败：\n%@%@";
+
+/* No comment provided by engineer. */
 "You’ve selected at least one Debian Package “%@”. We’re here to remind you that it will not work as it was in a jailbroken environment. Please make sure you know what you’re doing." = "你至少选择了一个 Debian 软件包 “%@”。请留意，它通常不会像在越狱环境当中那样工作，甚至完全不起作用。请确保你知道自己在做些什么。";

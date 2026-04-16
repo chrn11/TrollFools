@@ -47,6 +47,8 @@ final class AppListModel: ObservableObject {
     static let hasTrollStore: Bool = { LSApplicationProxy(forIdentifier: "com.opa334.TrollStore") != nil }()
     private var _allApplications: [App] = []
 
+    var allApplications: [App] { _allApplications }
+
     let selectorURL: URL?
     var isSelectorMode: Bool { selectorURL != nil }
 
@@ -133,13 +135,13 @@ final class AppListModel: ObservableObject {
 
         switch activeScope {
         case .all:
-            activeScopeApps = Self.groupedAppList(filteredApplications)
+            activeScopeApps = Self.groupedAppList(filteredApplications, pinInjectedApps: filter.pinInjectedApps)
         case .user:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isUser })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isUser }, pinInjectedApps: filter.pinInjectedApps)
         case .troll:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromTroll })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromTroll }, pinInjectedApps: filter.pinInjectedApps)
         case .system:
-            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromApple })
+            activeScopeApps = Self.groupedAppList(filteredApplications.filter { $0.isFromApple }, pinInjectedApps: filter.pinInjectedApps)
         }
     }
 
@@ -226,10 +228,30 @@ extension AppListModel {
 }
 
 extension AppListModel {
+    static let pinnedSectionKey = "📌"
     static let allowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#"
     private static let allowedCharacterSet = CharacterSet(charactersIn: allowedCharacters)
 
-    private static func groupedAppList(_ apps: [App]) -> OrderedDictionary<String, [App]> {
+    private static func groupedAppList(_ apps: [App], pinInjectedApps: Bool = false) -> OrderedDictionary<String, [App]> {
+        if pinInjectedApps {
+            let pinnedApps = apps.filter { $0.isInjected || $0.hasPersistedAssets }
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+            let normalApps = apps.filter { !$0.isInjected && !$0.hasPersistedAssets }
+
+            var groupedApps = OrderedDictionary<String, [App]>()
+
+            if !pinnedApps.isEmpty {
+                groupedApps[pinnedSectionKey] = pinnedApps
+            }
+
+            let normalGrouped = Self.groupedAppList(normalApps, pinInjectedApps: false)
+            for (key, value) in normalGrouped {
+                groupedApps[key] = value
+            }
+
+            return groupedApps
+        }
+
         var groupedApps = OrderedDictionary<String, [App]>()
 
         for app in apps {

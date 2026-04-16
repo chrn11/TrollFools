@@ -46,6 +46,7 @@ struct DisclaimerView: View {
                 ToolbarItem(placement: .bottomBar) {
                     Button {
                         isDisclaimerHidden = true
+                        UserDefaults.standard.set(true, forKey: "isDisclaimerHidden")
                     } label: {
                         VStack(spacing: 0) {
                             Text("我已阅读并同意")

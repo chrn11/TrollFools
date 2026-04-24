@@ -111,25 +111,6 @@ struct AppListView: View {
                 }
         }
     }
-                    Button(role: .destructive) {
-                        selectorOpenedURL = result
-                        isWarningHidden = true
-                    } label: {
-                        Text(NSLocalizedString("Continue and Don’t Show Again", comment: ""))
-                    }
-                    Button(role: .cancel) {
-                        temporaryOpenedURL = nil
-                        isWarningPresented = false
-                    } label: {
-                        Text(NSLocalizedString("Cancel", comment: ""))
-                    }
-                } message: {
-                    Text(OptionView.warningMessage([$0.url]))
-                }
-        } else {
-            content
-        }
-    }
 
     var content: some View {
         styledNavigationView

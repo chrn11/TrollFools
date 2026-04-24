@@ -308,4 +308,34 @@
 "You need to rebuild the icon cache in TrollStore to apply changes." = "You need to rebuild the icon cache in TrollStore to apply changes.";
 
 /* No comment provided by engineer. */
+"Pin Injected Apps" = "Pin Injected Apps";
+
+/* No comment provided by engineer. */
+"Pinned" = "Pinned";
+
+/* No comment provided by engineer. */
+"Re-Enable Disabled Plug-Ins" = "Re-Enable Disabled Plug-Ins";
+
+/* No comment provided by engineer. */
+"Completed" = "Completed";
+
+/* No comment provided by engineer. */
+"Failed" = "Failed";
+
+/* No comment provided by engineer. */
+"Completed with Errors" = "Completed with Errors";
+
+/* No comment provided by engineer. */
+"No disabled plug-ins found in patched apps." = "No disabled plug-ins found in patched apps.";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@" = "Re-enabled %d plug-ins in %d apps:\n%@%@";
+
+/* No comment provided by engineer. */
+"Failed to re-enable plug-ins in %d apps:\n%@%@" = "Failed to re-enable plug-ins in %d apps:\n%@%@";
+
+/* No comment provided by engineer. */
+"Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@" = "Re-enabled %d plug-ins in %d apps:\n%@%@\n\nFailed in %d apps:\n%@%@";
+
+/* No comment provided by engineer. */
 "You’ve selected at least one Debian Package “%@”. We’re here to remind you that it will not work as it was in a jailbroken environment. Please make sure you know what you’re doing." = "You’ve selected at least one Debian Package “%@”. We’re here to remind you that it will not work as it was in a jailbroken environment. Please make sure you know what you’re doing.";

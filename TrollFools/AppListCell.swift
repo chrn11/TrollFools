@@ -58,8 +58,9 @@ struct AppListCell: View {
                             .lineLimit(1)
                     }
 
-                    if app.plugInCount > 0 {
+                    if app.enabledPlugInCount > 0 || app.disabledPlugInCount > 0 {
                         plugInCountBadge
+                            .layoutPriority(1)
                     } else if app.isInjected || app.hasPersistedAssets {
                         Image(systemName: app.isInjected ? "bandage" : "exclamationmark.triangle")
                             .font(.subheadline)
@@ -71,7 +72,8 @@ struct AppListCell: View {
                 .animation(.easeOut, value: combines(
                     app.isInjected,
                     app.hasPersistedAssets,
-                    app.plugInCount
+                    app.enabledPlugInCount,
+                    app.disabledPlugInCount
                 ))
 
                 if #available(iOS 15, *) {
@@ -122,26 +124,51 @@ struct AppListCell: View {
     }
 
     var plugInCountBadge: some View {
-        let tint = app.isInjected ? Color.orange : Color.secondary
-        return HStack(spacing: 3) {
-            Image(systemName: app.isInjected ? "bandage" : "exclamationmark.triangle")
-                .font(.system(size: 11, weight: .semibold))
+        HStack(spacing: 4) {
+            if app.enabledPlugInCount > 0 {
+                plugInCountPill(
+                    String(format: NSLocalizedString("%d Enabled", comment: ""), app.enabledPlugInCount),
+                    systemImage: "checkmark",
+                    tint: Color.green
+                )
+            }
+
+            if app.disabledPlugInCount > 0 {
+                plugInCountPill(
+                    String(format: NSLocalizedString("%d Disabled", comment: ""), app.disabledPlugInCount),
+                    systemImage: "pause",
+                    tint: Color.secondary
+                )
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(
+            format: NSLocalizedString("%d Enabled, %d Disabled", comment: ""),
+            app.enabledPlugInCount,
+            app.disabledPlugInCount
+        ))
+        .transition(.opacity)
+    }
+
+    func plugInCountPill(_ title: String, systemImage: String, tint: Color) -> some View {
+        HStack(spacing: 2) {
+            Image(systemName: systemImage)
+                .font(.system(size: 9, weight: .bold))
                 .accessibilityHidden(true)
 
-            Text(app.plugInCount > 99 ? "99+" : "\(app.plugInCount)")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+            Text(title)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .lineLimit(1)
                 .accessibilityHidden(true)
         }
         .foregroundColor(tint)
+        .fixedSize(horizontal: true, vertical: false)
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
         .background(
             Capsule()
-                .fill(tint.opacity(0.15))
+                .fill(tint.opacity(0.16))
         )
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(format: NSLocalizedString("%d Plug-Ins", comment: ""), app.plugInCount))
-        .transition(.opacity)
     }
 
     @ViewBuilder

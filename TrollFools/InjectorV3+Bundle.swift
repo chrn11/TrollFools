@@ -9,6 +9,15 @@ import CocoaLumberjackSwift
 import Foundation
 import OrderedCollections
 
+struct PlugInCounts: Equatable {
+    let enabled: Int
+    let disabled: Int
+
+    var total: Int { enabled + disabled }
+
+    static let zero = PlugInCounts(enabled: 0, disabled: 0)
+}
+
 extension InjectorV3 {
     // MARK: - Constants
 
@@ -182,13 +191,13 @@ extension InjectorV3 {
             .sorted(by: { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending })
     }
 
-    func plugInCount(in target: URL, bid: String) -> Int {
+    func plugInCounts(in target: URL, bid: String) -> PlugInCounts {
         let enabled = checkIsBundle(target) ? injectedAssetURLsInBundle(target) : []
         let enabledNames = Set(enabled.map(\.lastPathComponent))
-        let disabledCount = persistedAssetURLs(bid: bid)
+        let disabled = persistedAssetURLs(bid: bid)
             .filter { !enabledNames.contains($0.lastPathComponent) }
             .count
-        return enabled.count + disabledCount
+        return PlugInCounts(enabled: enabled.count, disabled: disabled)
     }
 
     fileprivate func injectedBundleURLsInBundle(_ target: URL) -> [URL] {

@@ -14,6 +14,15 @@
 "%d Plug-Ins" = "%d Plug-In";
 
 /* No comment provided by engineer. */
+"%d Enabled" = "%d attivi";
+
+/* No comment provided by engineer. */
+"%d Disabled" = "%d disattivi";
+
+/* No comment provided by engineer. */
+"%d Enabled, %d Disabled" = "%1$d attivi, %2$d disattivi";
+
+/* No comment provided by engineer. */
 "Advanced Settings" = "Impostazioni Avanzate";
 
 /* No comment provided by engineer. */

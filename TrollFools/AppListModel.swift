@@ -148,12 +148,6 @@ final class AppListModel: ObservableObject {
         }
     }
 
-    private static let excludedIdentifiers: Set<String> = [
-        "com.opa334.Dopamine",
-        "org.coolstar.SileoStore",
-        "xyz.willy.Zebra",
-    ]
-
     private static func fetchApplications(_ unsupportedCount: inout Int) -> [App] {
         let allApps: [App] = LSApplicationWorkspace.default()
             .allApplications()
@@ -168,10 +162,6 @@ final class AppListModel: ObservableObject {
                 }
 
                 guard !id.hasPrefix("wiki.qaq.") && !id.hasPrefix("com.82flex.") && !id.hasPrefix("ch.xxtou.") else {
-                    return nil
-                }
-
-                guard !excludedIdentifiers.contains(id) else {
                     return nil
                 }
 

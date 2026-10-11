@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.4 Build 257 (2026-10-11)
+
+应用列表不再排除 Dopamine、Sileo 和 Zebra。
+
+### 修复
+
+- 应用列表：去掉对 `com.opa334.Dopamine`、`org.coolstar.SileoStore`、`xyz.willy.Zebra` 的硬编码排除。
+
+------
+
+## 4.4 Build 257 (2026-10-11) [EN]
+
+Dopamine, Sileo, and Zebra are no longer hidden from the application list.
+
+### Fixed
+
+- Application list: Removed the hardcoded exclusion of `com.opa334.Dopamine`, `org.coolstar.SileoStore`, and `xyz.willy.Zebra`.
+
+------
+
 ## 4.3 Build 253 (2026-04-23)
 
 修复与 MachOKit 有关的一处断言崩溃。

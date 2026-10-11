@@ -189,11 +189,6 @@ struct OptionView: View {
     }
 
     private func recalculatePlugInCount() {
-        var urls = [URL]()
-        urls += InjectorV3.main.injectedAssetURLsInBundle(app.url)
-        let enabledNames = urls.map { $0.lastPathComponent }
-        urls += InjectorV3.main.persistedAssetURLs(bid: app.bid)
-            .filter { !enabledNames.contains($0.lastPathComponent) }
-        numberOfPlugIns = urls.count
+        numberOfPlugIns = InjectorV3.main.plugInCount(in: app.url, bid: app.bid)
     }
 }

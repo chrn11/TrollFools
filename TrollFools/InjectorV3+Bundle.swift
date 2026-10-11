@@ -182,6 +182,15 @@ extension InjectorV3 {
             .sorted(by: { $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending })
     }
 
+    func plugInCount(in target: URL, bid: String) -> Int {
+        let enabled = checkIsBundle(target) ? injectedAssetURLsInBundle(target) : []
+        let enabledNames = Set(enabled.map(\.lastPathComponent))
+        let disabledCount = persistedAssetURLs(bid: bid)
+            .filter { !enabledNames.contains($0.lastPathComponent) }
+            .count
+        return enabled.count + disabledCount
+    }
+
     fileprivate func injectedBundleURLsInBundle(_ target: URL) -> [URL] {
         precondition(checkIsBundle(target), "Not a bundle: \(target.path)")
 

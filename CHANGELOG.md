@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.4 Build 258 (2026-10-11)
+
+应用列表会显示每个已注入应用添加了几个插件。
+
+### 新增
+
+- 应用列表：已注入或仍有已禁用插件的应用，名称旁显示插件数量。计数与插件管理页一致，包含已启用和已禁用的插件。
+
+------
+
+## 4.4 Build 258 (2026-10-11) [EN]
+
+The application list shows how many plug-ins were added to each patched app.
+
+### Added
+
+- Application list: Apps that are injected, or still have disabled plug-ins, show a plug-in count beside the name. The count matches the manage screen and includes both enabled and disabled plug-ins.
+
+------
+
 ## 4.4 Build 257 (2026-10-11)
 
 应用列表不再排除 Dopamine、Sileo 和 Zebra。

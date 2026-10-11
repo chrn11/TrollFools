@@ -58,7 +58,9 @@ struct AppListCell: View {
                             .lineLimit(1)
                     }
 
-                    if app.isInjected || app.hasPersistedAssets {
+                    if app.plugInCount > 0 {
+                        plugInCountBadge
+                    } else if app.isInjected || app.hasPersistedAssets {
                         Image(systemName: app.isInjected ? "bandage" : "exclamationmark.triangle")
                             .font(.subheadline)
                             .foregroundColor(.orange)
@@ -68,7 +70,8 @@ struct AppListCell: View {
                 }
                 .animation(.easeOut, value: combines(
                     app.isInjected,
-                    app.hasPersistedAssets
+                    app.hasPersistedAssets,
+                    app.plugInCount
                 ))
 
                 if #available(iOS 15, *) {
@@ -116,6 +119,29 @@ struct AppListCell: View {
             }
         }
         .background(cellBackground)
+    }
+
+    var plugInCountBadge: some View {
+        let tint = app.isInjected ? Color.orange : Color.secondary
+        return HStack(spacing: 3) {
+            Image(systemName: app.isInjected ? "bandage" : "exclamationmark.triangle")
+                .font(.system(size: 11, weight: .semibold))
+                .accessibilityHidden(true)
+
+            Text(app.plugInCount > 99 ? "99+" : "\(app.plugInCount)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .accessibilityHidden(true)
+        }
+        .foregroundColor(tint)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(
+            Capsule()
+                .fill(tint.opacity(0.15))
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(format: NSLocalizedString("%d Plug-Ins", comment: ""), app.plugInCount))
+        .transition(.opacity)
     }
 
     @ViewBuilder

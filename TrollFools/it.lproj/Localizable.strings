@@ -11,6 +11,9 @@
 "%ld Plug-Ins of “%@”" = "%1$ld Plug-Ins of “%2$@”";
 
 /* No comment provided by engineer. */
+"%d Plug-Ins" = "%d Plug-In";
+
+/* No comment provided by engineer. */
 "Advanced Settings" = "Impostazioni Avanzate";
 
 /* No comment provided by engineer. */

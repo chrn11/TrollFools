@@ -11,6 +11,9 @@
 "%ld Plug-Ins of “%@”" = "“%2$@” 的 %1$ld 个插件";
 
 /* No comment provided by engineer. */
+"%d Plug-Ins" = "%d 个插件";
+
+/* No comment provided by engineer. */
 "Advanced Settings" = "高级选项";
 
 /* No comment provided by engineer. */

@@ -22,6 +22,7 @@ final class App: ObservableObject {
     @Published var isAllowedToAttachOrDetach: Bool
     @Published var isInjected: Bool
     @Published var hasPersistedAssets: Bool
+    @Published var plugInCount: Int
 
     lazy var icon: UIImage? = UIImage._applicationIconImage(forBundleIdentifier: bid, format: 0, scale: 3.0)
     var alternateIcon: UIImage?
@@ -52,10 +53,18 @@ final class App: ObservableObject {
         self.teamID = teamID
         self.url = url
         self.version = version
+        let injected = InjectorV3.main.checkIsInjectedAppBundle(url)
+        let persisted = InjectorV3.main.hasPersistedAssets(bid: bid)
         self.isDetached = InjectorV3.main.isMetadataDetachedInBundle(url)
         self.isAllowedToAttachOrDetach = type == "User" && InjectorV3.main.isAllowedToAttachOrDetachMetadataInBundle(url)
-        self.isInjected = InjectorV3.main.checkIsInjectedAppBundle(url)
-        self.hasPersistedAssets = InjectorV3.main.hasPersistedAssets(bid: bid)
+        self.isInjected = injected
+        self.hasPersistedAssets = persisted
+        self.plugInCount = Self.plugInCount(
+            url: url,
+            bid: bid,
+            isInjected: injected,
+            hasPersistedAssets: persisted
+        )
         self.alternateIcon = alternateIcon
         self.isAdvertisement = isAdvertisement
         self.latinName = name
@@ -88,5 +97,18 @@ final class App: ObservableObject {
     private func reloadInjectedStatus() {
         self.isInjected = InjectorV3.main.checkIsInjectedAppBundle(url)
         self.hasPersistedAssets = InjectorV3.main.hasPersistedAssets(bid: bid)
+        self.plugInCount = Self.plugInCount(
+            url: url,
+            bid: bid,
+            isInjected: isInjected,
+            hasPersistedAssets: hasPersistedAssets
+        )
+    }
+
+    private static func plugInCount(url: URL, bid: String, isInjected: Bool, hasPersistedAssets: Bool) -> Int {
+        guard isInjected || hasPersistedAssets else {
+            return 0
+        }
+        return InjectorV3.main.plugInCount(in: url, bid: bid)
     }
 }

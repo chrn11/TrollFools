@@ -126,19 +126,11 @@ struct AppListCell: View {
     var plugInCountBadge: some View {
         HStack(spacing: 4) {
             if app.enabledPlugInCount > 0 {
-                plugInCountPill(
-                    String(format: NSLocalizedString("%d Enabled", comment: ""), app.enabledPlugInCount),
-                    systemImage: "checkmark",
-                    tint: Color.green
-                )
+                plugInCountPill(app.enabledPlugInCount, systemImage: "bandage")
             }
 
             if app.disabledPlugInCount > 0 {
-                plugInCountPill(
-                    String(format: NSLocalizedString("%d Disabled", comment: ""), app.disabledPlugInCount),
-                    systemImage: "pause",
-                    tint: Color.secondary
-                )
+                plugInCountPill(app.disabledPlugInCount, systemImage: "exclamationmark.triangle")
             }
         }
         .accessibilityElement(children: .ignore)
@@ -150,24 +142,24 @@ struct AppListCell: View {
         .transition(.opacity)
     }
 
-    func plugInCountPill(_ title: String, systemImage: String, tint: Color) -> some View {
-        HStack(spacing: 2) {
+    func plugInCountPill(_ count: Int, systemImage: String) -> some View {
+        HStack(spacing: 3) {
             Image(systemName: systemImage)
-                .font(.system(size: 9, weight: .bold))
+                .font(.system(size: 11, weight: .semibold))
                 .accessibilityHidden(true)
 
-            Text(title)
-                .font(.system(size: 11, weight: .semibold, design: .rounded))
+            Text(count > 99 ? "99+" : "\(count)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
                 .lineLimit(1)
                 .accessibilityHidden(true)
         }
-        .foregroundColor(tint)
+        .foregroundColor(.orange)
         .fixedSize(horizontal: true, vertical: false)
         .padding(.horizontal, 6)
         .padding(.vertical, 2)
         .background(
             Capsule()
-                .fill(tint.opacity(0.16))
+                .fill(Color.orange.opacity(0.15))
         )
     }
 

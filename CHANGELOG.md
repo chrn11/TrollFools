@@ -1,5 +1,29 @@
 # Changelog
 
+## 4.4 Build 260 (2026-10-11)
+
+应用列表用原来的图标分别显示启用和禁用数量。
+
+### 调整
+
+- 有已启用插件时，名称旁仍是橙色创可贴，数字是启用数量。
+- 还有已禁用插件时，后面再跟一个三角和禁用数量。
+- 全部禁用时只显示三角和禁用数量。
+
+------
+
+## 4.4 Build 260 (2026-10-11) [EN]
+
+The application list uses the original icons to show enabled and disabled plug-in counts separately.
+
+### Changed
+
+- Apps with enabled plug-ins keep the orange bandage beside the name. The number is the enabled count.
+- If some plug-ins are disabled, a triangle and the disabled count follow it.
+- When every plug-in is disabled, only the triangle and the disabled count are shown.
+
+------
+
 ## 4.4 Build 259 (2026-10-11)
 
 应用列表分开显示已启用和已禁用的插件数量。

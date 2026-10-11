@@ -14,6 +14,15 @@
 "%d Plug-Ins" = "%d 个插件";
 
 /* No comment provided by engineer. */
+"%d Enabled" = "%d 启用";
+
+/* No comment provided by engineer. */
+"%d Disabled" = "%d 禁用";
+
+/* No comment provided by engineer. */
+"%d Enabled, %d Disabled" = "%1$d 个启用，%2$d 个禁用";
+
+/* No comment provided by engineer. */
 "Advanced Settings" = "高级选项";
 
 /* No comment provided by engineer. */

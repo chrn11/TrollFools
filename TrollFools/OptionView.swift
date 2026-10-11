@@ -189,6 +189,6 @@ struct OptionView: View {
     }
 
     private func recalculatePlugInCount() {
-        numberOfPlugIns = InjectorV3.main.plugInCount(in: app.url, bid: app.bid)
+        numberOfPlugIns = InjectorV3.main.plugInCounts(in: app.url, bid: app.bid).total
     }
 }

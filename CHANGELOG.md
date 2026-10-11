@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.4 Build 259 (2026-10-11)
+
+应用列表分开显示已启用和已禁用的插件数量。
+
+### 新增
+
+- 应用列表：名称旁不再只显示插件总数。绿色胶囊是已启用数量，灰色胶囊是已禁用数量。某一侧为 0 时不显示对应胶囊。
+
+------
+
+## 4.4 Build 259 (2026-10-11) [EN]
+
+The application list shows enabled and disabled plug-in counts separately.
+
+### Added
+
+- Application list: The name row no longer shows only a combined plug-in total. A green capsule is the enabled count, and a gray capsule is the disabled count. A capsule is hidden when its count is zero.
+
+------
+
 ## 4.4 Build 258 (2026-10-11)
 
 应用列表会显示每个已注入应用添加了几个插件。

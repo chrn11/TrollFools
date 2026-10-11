@@ -14,6 +14,15 @@
 "%d Plug-Ins" = "%d plug-in";
 
 /* No comment provided by engineer. */
+"%d Enabled" = "%d bật";
+
+/* No comment provided by engineer. */
+"%d Disabled" = "%d tắt";
+
+/* No comment provided by engineer. */
+"%d Enabled, %d Disabled" = "%1$d bật, %2$d tắt";
+
+/* No comment provided by engineer. */
 "Advanced Settings" = "Cài đặt nâng cao";
 
 /* No comment provided by engineer. */
